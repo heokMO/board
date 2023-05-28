@@ -3,9 +3,6 @@ package com.example.board.security;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.crypto.SecretKey;
 
@@ -17,41 +14,41 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtils {
     private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_TIME = 86400000; // 24 hours
-    private static final Set<String> invalidJWTSet = new HashSet<>();
-    private static final ScheduledExecutorService service= Executors.newScheduledThreadPool(0);
-    
+    private static final Set<String> JWTSet = new HashSet<>();
 
     public static String generateToken(String username) {
-        
-        return Jwts.builder()
-        .setSubject(username)
-        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-        .signWith(SECRET_KEY)
-        .compact();
+        String token = Jwts.builder()
+                .setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SECRET_KEY)
+                .compact();
+        JWTSet.add(token);
+
+        return token;
     }
 
-    public static boolean validateToken(String token){
-        if(invalidJWTSet.contains(token)){
+    public static boolean validateToken(String token) {
+        if (!JWTSet.contains(token)) {
             return false;
         }
-        try{
-            Jwts.parserBuilder().setSigningKey(SECRET_KEY).build()
-            .parseClaimsJws(token);
+        try {
+            if(JWTSet.contains(token) &&
+                Jwts.parserBuilder().setSigningKey(SECRET_KEY).build()
+                    .parseClaimsJws(token) != null)
             return true;
-        } catch(Exception e){
-            return false;
+        } catch (Exception ignored) {
         }
+        return false;
     }
 
-    public static void invalidJWT(String token){
-        invalidJWTSet.add(token);
-        service.schedule(()->invalidJWTSet.remove(token), EXPIRATION_TIME, TimeUnit.MILLISECONDS);
+    public static void invalidJWT(String token) {
+        JWTSet.remove(token);
     }
 
-    public static String getUsername(String token){
+    public static String getUsername(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build()
-        .parseClaimsJws(token)
-        .getBody();
+                .parseClaimsJws(token)
+                .getBody();
         return claims.getSubject();
     }
 }
