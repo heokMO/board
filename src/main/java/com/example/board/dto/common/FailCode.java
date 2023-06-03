@@ -1,8 +1,9 @@
 package com.example.board.dto.common;
 
 public enum FailCode {
-    USERNAME_FAIL(1, "Username is invalid."),
-    PASSWORD_FAIL(2, "Password is invalid.");
+    USERNAME_FAIL(10, "Username is invalid."),
+    PASSWORD_FAIL(11, "Password is invalid."),
+    JWT_INVALID(12, "JWT is invalid");
 
     private final Integer code;
     private final String message;
