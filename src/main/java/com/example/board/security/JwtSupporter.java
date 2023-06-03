@@ -27,7 +27,7 @@ public class JwtSupporter {
                 .signWith(SECRET_KEY)
                 .compact();
         JWTSet.add(token);
-
+        
         return token;
     }
 

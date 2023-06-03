@@ -5,15 +5,15 @@ import org.springframework.http.HttpStatus;
 public class SuccessDTO extends MessageDTO{
     private static final long serialVersionUID = 1L;
 
-    private final ResultDTO resultDTO;
+    private final ResultDTO result;
 
-    public SuccessDTO(ResultDTO resultDTO) {
+    public SuccessDTO(ResultDTO result) {
         super(HttpStatus.OK.value());
-        this.resultDTO = resultDTO;
+        this.result = result;
     }
 
-    public ResultDTO getResultDTO() {
-        return resultDTO;
+    public ResultDTO getResult() {
+        return result;
     }
     
 
