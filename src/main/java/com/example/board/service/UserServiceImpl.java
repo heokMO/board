@@ -11,11 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService{
     private final UserDAO userDAO;
-    private final BCrypt.Hasher hasher;
-
-    public UserServiceImpl(UserDAO userDAO, BCrypt.Hasher hasher) {
+    public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
-        this.hasher = hasher;
     }
 
     @Override
@@ -28,8 +25,7 @@ public class UserServiceImpl implements UserService{
         if(BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified){
             return;
         }
-        System.out.println();
-        System.out.println(hasher.hashToString(12, password.toCharArray()));
+
         throw new PasswordAuthenticationException();
     }
     
