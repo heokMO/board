@@ -1,7 +1,9 @@
 package com.example.board.controller;
 
-import com.example.board.dto.common.*;
-import com.example.board.dto.common.login.LogoutSuccessDTO;
+import com.example.board.dto.common.FailCode;
+import com.example.board.dto.common.FailDTO;
+import com.example.board.dto.common.MessageDTO;
+import com.example.board.dto.common.SuccessDTO;
 import com.example.board.exception.login.AuthenticationException;
 import com.example.board.exception.login.PasswordAuthenticationException;
 import com.example.board.exception.login.UsernameAuthenticationException;
@@ -60,7 +62,7 @@ public class LoginController {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth("");
+        headers.remove("Authorization");
 
         return ResponseEntity
                 .ok()
