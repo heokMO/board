@@ -53,15 +53,19 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public MessageDTO processLogout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<MessageDTO> processLogout(@RequestHeader("Authorization") String token) {
         String extractedToken = extractBearerToken(token);
         if (jwtSupporter.validateToken(extractedToken)) {
             jwtSupporter.invalidJWT(extractedToken);
         }
-        ResultDTO result = new LogoutSuccessDTO();
-        return SuccessDTO.builder()
-                .resultDTO(result)
-                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth("");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(SuccessDTO.builder().build());
     }
 
     @PostMapping("/refresh")
