@@ -41,4 +41,11 @@ public class UserController {
 
         return ResponseEntity.ok(Message.builder().build());
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Message> processLogout(HttpServletResponse response){
+        Cookie cookie = new Cookie("user", null);
+        cookie.setMaxAge(0);
+        return ResponseEntity.ok(Message.builder().build());
+    }
 }
