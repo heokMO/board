@@ -3,6 +3,17 @@
 <mapper namespace="com.example.board.dao.UserDAO">
 
     <select id="findByAccountId" resultType="com.example.board.vo.UserVO">
-        SELECT account_id, password FROM user WHERE account_id = #{username}
+        SELECT id, account_id, password FROM user WHERE account_id = #{username}
     </select>
+
+    <insert id="createSession" parameterType="com.example.board.vo.UserSessionVO">
+        INSERT INTO UserSession (user_id, session_id, expiration_time)
+        VALUES (#{userId}, #{sessionId}, #{expirationTime})
+    </insert>
+
+    <delete id="deleteSession">
+        DELETE FROM UserSession
+        WHERE session_id = #{sessionID}
+    </delete>
+
 </mapper>

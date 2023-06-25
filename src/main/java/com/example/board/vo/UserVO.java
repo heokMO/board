@@ -74,6 +74,20 @@ public class UserVO {
                 Objects.equals(this.id, ((UserVO) obj).id);
     }
 
+    @Override
+    public String toString() {
+        return "UserVO{" +
+                "id=" + id +
+                ", accountId='" + accountId + '\'' +
+                ", password='" + password + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                ", writtenTime=" + writtenTime +
+                ", updateTime=" + updateTime +
+                ", delReqTime=" + delReqTime +
+                '}';
+    }
+
     public static UserVOBuilder builder(){
         return new UserVOBuilder();
     }
