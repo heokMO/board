@@ -15,10 +15,13 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.10.2'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
