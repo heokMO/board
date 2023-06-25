@@ -5,7 +5,9 @@ import com.example.board.dao.UserDAO;
 import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.vo.UserVO;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
 

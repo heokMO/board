@@ -7,4 +7,8 @@ public class CustomException extends Exception{
         super(exceptionMessage.getMessage());
         this.exceptionMessage = exceptionMessage;
     }
+
+    public ExceptionMessage getExceptionMessage() {
+        return exceptionMessage;
+    }
 }
