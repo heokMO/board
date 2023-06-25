@@ -46,6 +46,7 @@ public class UserController {
     public ResponseEntity<Message> processLogout(HttpServletResponse response){
         Cookie cookie = new Cookie("user", null);
         cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ResponseEntity.ok(Message.builder().build());
     }
 }
