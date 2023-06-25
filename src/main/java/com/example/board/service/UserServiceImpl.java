@@ -16,14 +16,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void authenticate(String username, String password) throws CustomException {
+    public String authenticate(String username, String password) throws CustomException {
         UserVO user = userDAO.findByAccountId(username);
         if(user == null){
             throw new CustomException(ExceptionMessage.UsernameFail);
         }
 
         if(BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified){
-            return;
+            return username;
         }
 
         throw new CustomException(ExceptionMessage.PasswordFail);
