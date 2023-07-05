@@ -9,4 +9,6 @@ public interface UserDAO {
     UserVO findByAccountId(String username);
     void createSession(UserSessionVO userSessionVO);
     void deleteSession(String sessionID);
+
+    boolean existSessionId(String sessionId);
 }

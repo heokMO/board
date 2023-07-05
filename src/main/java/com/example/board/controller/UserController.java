@@ -58,6 +58,20 @@ public class UserController {
         return ResponseEntity.ok(Message.builder().build());
     }
 
+    @PostMapping("/login-check")
+    public ResponseEntity<Message> loginCheck(HttpServletRequest httpServletRequest){
+        HttpSession session = httpServletRequest.getSession(false);
+        if(session == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.SessionIdNotFound));
+        }
+        String sessionId = session.getId();
+
+        if(userService.isLogin(sessionId)){
+            return ResponseEntity.ok(Message.builder().build());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.SessionIdInvalid));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Message> processLogout(HttpServletRequest httpServletRequest){
         HttpSession httpSession = httpServletRequest.getSession(false);

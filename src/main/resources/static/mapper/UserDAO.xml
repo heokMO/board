@@ -5,6 +5,9 @@
     <select id="findByAccountId" resultType="com.example.board.vo.UserVO">
         SELECT id, account_id, password FROM user WHERE account_id = #{username}
     </select>
+    <select id="existSessionId" resultType="java.lang.Boolean">
+        select count(*) from usersession where session_id = #{sessionId}
+    </select>
 
     <insert id="createSession" parameterType="com.example.board.vo.UserSessionVO">
         INSERT INTO UserSession (user_id, session_id, expiration_time)

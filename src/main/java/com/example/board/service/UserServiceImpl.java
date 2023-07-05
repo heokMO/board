@@ -39,4 +39,9 @@ public class UserServiceImpl implements UserService {
     public void deleteSession(String sessionID) {
         userDAO.deleteSession(sessionID);
     }
+
+    @Override
+    public boolean isLogin(String sessionId) {
+        return userDAO.existSessionId(sessionId);
+    }
 }

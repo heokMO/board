@@ -7,4 +7,6 @@ public interface UserService {
     Long authenticate(String username, String password) throws CustomException;
     void createSession(UserSessionVO userSessionVO);
     void deleteSession(String sessionID);
+
+    boolean isLogin(String sessionId);
 }
