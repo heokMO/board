@@ -28,4 +28,11 @@ public class UserServiceImpl implements UserService {
 
         throw new CustomException(ExceptionMessage.PasswordFail);
     }
+
+    @Override
+    public boolean exists(String username) {
+        return userDAO.existsByAccountId(username);
+    }
+
+
 }

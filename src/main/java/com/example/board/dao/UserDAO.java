@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserDAO {
     UserVO findByAccountId(String username);
+
+    boolean existsByAccountId(String username);
 }

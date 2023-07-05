@@ -32,6 +32,13 @@ public class Message implements Serializable {
                 .build();
     }
 
+    public static Message getErrorMessage(ExceptionMessage exceptionMessage){
+
+        return new Builder().message(exceptionMessage.getMessage())
+                .internalErrorCode(exceptionMessage.getInternalCode())
+                .build();
+    }
+
     public static Builder builder(){
         return new Builder();
     }

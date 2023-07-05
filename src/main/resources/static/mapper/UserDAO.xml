@@ -5,4 +5,8 @@
     <select id="findByAccountId" resultType="com.example.board.vo.UserVO">
         SELECT account_id, password FROM user WHERE account_id = #{username}
     </select>
+    <select id="existsByAccountId" resultType="java.lang.Boolean">
+        select count(*) from user where account_id = #{username}
+    </select>
+
 </mapper>
