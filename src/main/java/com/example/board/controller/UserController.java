@@ -58,34 +58,26 @@ public class UserController {
 
     @PostMapping("/login-check")
     public ResponseEntity<Message> checkLogin(HttpServletRequest httpServletRequest){
-        //find cookie value(encryptedUsername)
         Cookie[] cookies = httpServletRequest.getCookies();
         if(cookies == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.CookieNotFoundError));
         }
-        Optional<Cookie> cookie = Arrays.stream(cookies).filter(e-> e.getName().equals("user")).findFirst();
-        String encryptedUsername;
         try{
-             encryptedUsername = cookie.orElseThrow().getValue();
+            Optional<Cookie> cookie = Arrays.stream(cookies).filter(e-> e.getName().equals("user")).findFirst();
+            String encryptedUsername = cookie.orElseThrow().getValue();
+            String username = CookieEncryptionUtil.decrypt(encryptedUsername);
+            if(!userService.exists(username)){
+                log.error("Invalid username. username : {}", username);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().build());
+            }
         } catch (NoSuchElementException e){
             String cookieKeyList = Arrays.stream(cookies)
                     .map(Cookie::getName)
                     .reduce("", (a, b)-> a + "," +b);
             log.info("Username Cookie is not found. cookie key list: {}", cookieKeyList);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.UsernameCookieNotFoundError));
-        }
-        // encrypted username decrypt
-        String username;
-        try{
-            username = CookieEncryptionUtil.decrypt(encryptedUsername);
-        } catch (Exception e){
-           log.error("decrypt failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.getErrorMessage(ExceptionMessage.CookieDecryptError));
-        }
-        // Username validation check
-        if(!userService.exists(username)){
-            log.error("Invalid username. username : {}", username);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().build());
+        } catch (CustomException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.getErrorMessage(e));
         }
 
         return ResponseEntity.ok(Message.builder().build());
