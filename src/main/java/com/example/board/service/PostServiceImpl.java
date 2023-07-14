@@ -15,8 +15,12 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public boolean isLoginRequired(String id) {
-        return postDAO.isLoginRequired(id);
+    public boolean isLoginRequired(String id) throws CustomException {
+        Boolean isLoginRequired = postDAO.isLoginRequired(id);
+        if(isLoginRequired == null){
+            throw new CustomException(ExceptionMessage.PostNotFoundException);
+        }
+        return isLoginRequired;
     }
 
     @Override
