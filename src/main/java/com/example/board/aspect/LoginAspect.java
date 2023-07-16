@@ -4,6 +4,7 @@ import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
 import com.example.board.util.CookieEncryptionUtil;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
@@ -30,10 +31,10 @@ public class LoginAspect {
 
 
     @Before("@annotation(LoginRequired)")
-    public void checkLoginStatus() throws CustomException {
+    public void checkLoginStatus(JoinPoint joinPoint) throws CustomException {
         Cookie[] cookies = httpServletRequest.getCookies();
         if(cookies == null){
-            log.info("cookies is null");
+            log.error("cookies is null");
             throw new CustomException(ExceptionMessage.CookieNotFoundError);
         }
         try{
