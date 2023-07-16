@@ -1,13 +1,13 @@
-package com.example.board.util;
+package com.example.board.aspect;
 
-import com.example.board.dto.common.Message;
 import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
+import com.example.board.util.CookieEncryptionUtil;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -16,16 +16,21 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Aspect
 @Component
-public class LoginChecker {
-    private final static Logger log = LoggerFactory.getLogger(LoginChecker.class);
+public class LoginAspect {
+    private static final Logger log = LoggerFactory.getLogger(LoginAspect.class);
+    private final HttpServletRequest httpServletRequest;
     private final UserService userService;
 
-    public LoginChecker(UserService userService) {
+    public LoginAspect(HttpServletRequest httpServletRequest, UserService userService) {
+        this.httpServletRequest = httpServletRequest;
         this.userService = userService;
     }
 
-    public void check(HttpServletRequest httpServletRequest)  throws CustomException{
+
+    @Before("@annotation(LoginRequired)")
+    public void checkLoginStatus() throws CustomException {
         Cookie[] cookies = httpServletRequest.getCookies();
         if(cookies == null){
             log.info("cookies is null");

@@ -1,11 +1,13 @@
 package com.example.board.controller;
 
+import com.example.board.aspect.LoginRequired;
 import com.example.board.dto.common.Message;
 import com.example.board.dto.request.LoginRequest;
 import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
 import com.example.board.util.CookieEncryptionUtil;
+import com.example.board.util.LoginChecker;
 import com.example.board.util.NullChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +29,11 @@ public class UserController {
     private final static int LOGIN_COOKIE_DEFAULT_MAX_AGE = 24 * 60 * 60;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final LoginChecker loginChecker;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LoginChecker loginChecker) {
         this.userService = userService;
+        this.loginChecker = loginChecker;
     }
 
     @PostMapping("/login")
@@ -56,29 +60,9 @@ public class UserController {
         return ResponseEntity.ok(Message.builder().build());
     }
 
+    @LoginRequired
     @PostMapping("/login-check")
-    public ResponseEntity<Message> checkLogin(HttpServletRequest httpServletRequest){
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if(cookies == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.CookieNotFoundError));
-        }
-        try{
-            Optional<Cookie> cookie = Arrays.stream(cookies).filter(e-> e.getName().equals("user")).findFirst();
-            String encryptedUsername = cookie.orElseThrow().getValue();
-            String username = CookieEncryptionUtil.decrypt(encryptedUsername);
-            if(!userService.exists(username)){
-                log.error("Invalid username. username : {}", username);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().build());
-            }
-        } catch (NoSuchElementException e){
-            String cookieKeyList = Arrays.stream(cookies)
-                    .map(Cookie::getName)
-                    .reduce("", (a, b)-> a + "," +b);
-            log.info("Username Cookie is not found. cookie key list: {}", cookieKeyList);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.UsernameCookieNotFoundError));
-        } catch (CustomException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.getErrorMessage(e));
-        }
+    public ResponseEntity<Message> checkLogin(){
 
         return ResponseEntity.ok(Message.builder().build());
     }
