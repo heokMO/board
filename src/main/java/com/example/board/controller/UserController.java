@@ -7,7 +7,6 @@ import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
 import com.example.board.util.CookieEncryptionUtil;
-import com.example.board.util.LoginChecker;
 import com.example.board.util.NullChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,22 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Controller
 public class UserController {
     private final static int LOGIN_COOKIE_DEFAULT_MAX_AGE = 24 * 60 * 60;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final LoginChecker loginChecker;
 
-    public UserController(UserService userService, LoginChecker loginChecker) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.loginChecker = loginChecker;
     }
 
     @PostMapping("/login")
@@ -46,7 +39,7 @@ public class UserController {
             password = NullChecker.check(loginRequest.getPassword(), new CustomException(ExceptionMessage.PasswordFail));
             userService.authenticate(username, password);
         } catch (CustomException e) {
-            log.error(">>>", e);
+            log.error("User authentication failed", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(e));
         }
         try{

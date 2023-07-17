@@ -10,7 +10,10 @@ public enum ExceptionMessage {
     UsernameCookieNotFoundError("username에 관한 cookie를 찾지 못하였습니다.", HttpStatus.UNAUTHORIZED, 105),
     CookieDecryptError("Cookie를 복호화하는데에 실패하였습니다.", HttpStatus.UNAUTHORIZED, 106),
     InvalidCookieUsername("Cookie의 username이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED, 107),
+    LoginRequiredRequestFail("로그인이 필요한 요청이나 로그인 중이 아닙니다", HttpStatus.UNAUTHORIZED, 108),
+
     PostNotFoundException("해당 게시물은 존재하지 않습니다.", HttpStatus.NOT_FOUND, 201);
+
 
     private final String message;
     private final HttpStatus httpStatus;

@@ -4,6 +4,7 @@ import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
 import com.example.board.util.CookieEncryptionUtil;
+import com.example.board.util.LoginChecker;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -22,35 +23,16 @@ import java.util.Optional;
 public class LoginAspect {
     private static final Logger log = LoggerFactory.getLogger(LoginAspect.class);
     private final HttpServletRequest httpServletRequest;
-    private final UserService userService;
+    private final LoginChecker loginChecker;
 
-    public LoginAspect(HttpServletRequest httpServletRequest, UserService userService) {
+    public LoginAspect(HttpServletRequest httpServletRequest, LoginChecker loginChecker) {
         this.httpServletRequest = httpServletRequest;
-        this.userService = userService;
+        this.loginChecker = loginChecker;
     }
 
 
     @Before("@annotation(LoginRequired)")
     public void checkLoginStatus(JoinPoint joinPoint) throws CustomException {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if(cookies == null){
-            log.error("cookies is null");
-            throw new CustomException(ExceptionMessage.CookieNotFoundError);
-        }
-        try{
-            Optional<Cookie> cookie = Arrays.stream(cookies).filter(e-> e.getName().equals("user")).findFirst();
-            String encryptedUsername = cookie.orElseThrow().getValue();
-            String username = CookieEncryptionUtil.decrypt(encryptedUsername);
-            if(!userService.exists(username)){
-                log.error("Invalid username. username : {}", username);
-                throw new CustomException(ExceptionMessage.InvalidCookieUsername);
-            }
-        } catch (NoSuchElementException e){
-            String cookieKeyList = Arrays.stream(cookies)
-                    .map(Cookie::getName)
-                    .reduce("", (a, b)-> a + "," +b);
-            log.error("Username Cookie is not found. cookie key list: {}", cookieKeyList);
-            throw new CustomException(ExceptionMessage.UsernameCookieNotFoundError);
-        }
+        loginChecker.check(httpServletRequest);
     }
 }

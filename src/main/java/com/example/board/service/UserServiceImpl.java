@@ -5,10 +5,13 @@ import com.example.board.dao.UserDAO;
 import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.vo.UserVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserDAO userDAO;
 
     public UserServiceImpl(UserDAO userDAO) {
@@ -30,8 +33,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean exists(String username) {
-        return userDAO.existsByAccountId(username);
+    public void checkUsername(String username) throws CustomException {
+        if(userDAO.existsByAccountId(username)){
+            return;
+        }
+        log.error("Invalid username. username : {}", username);
+        throw new CustomException(ExceptionMessage.InvalidCookieUsername);
     }
 
 
