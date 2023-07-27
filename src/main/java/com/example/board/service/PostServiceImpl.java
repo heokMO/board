@@ -5,10 +5,13 @@ import com.example.board.dto.post.PostReadDTO;
 import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
 import com.example.board.vo.PostVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PostServiceImpl implements PostService{
+    private final static Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PostDAO postDAO;
     public PostServiceImpl(PostDAO postDAO) {
         this.postDAO = postDAO;
@@ -18,6 +21,7 @@ public class PostServiceImpl implements PostService{
     public boolean isLoginRequired(String id) throws CustomException {
         Boolean isLoginRequired = postDAO.isLoginRequired(id);
         if(isLoginRequired == null){
+            log.error("Not found post. ID: {}", id);
             throw new CustomException(ExceptionMessage.PostNotFoundException);
         }
         return isLoginRequired;
@@ -27,6 +31,7 @@ public class PostServiceImpl implements PostService{
     public PostReadDTO findById(String id) throws CustomException {
         PostVO vo = postDAO.findById(id);
         if (vo == null){
+            log.error("Not found post. ID: {}", id);
             throw new CustomException(ExceptionMessage.PostNotFoundException);
         }
 
