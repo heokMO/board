@@ -1,21 +1,32 @@
 package com.example.board.exception;
 
+import org.springframework.http.HttpStatus;
+
 public enum ExceptionMessage {
-    UsernameFail("사용자의 ID가 잘못되었습니다.", 101),
-    PasswordFail("비밀번호가 잘못되었습니다", 102),
-    SessionIdNotFound("해당 sessionId를 찾지 못하였습니다.", 103),
-    SessionIdInvalid("해당 세션은 유효하지 않습니다.", 104);
+    UsernameFail("사용자의 ID가 잘못되었습니다.", HttpStatus.UNAUTHORIZED, 101),
+    PasswordFail("비밀번호가 잘못되었습니다", HttpStatus.UNAUTHORIZED, 102),
+    SessionIdNotFound("해당 sessionId를 찾지 못하였습니다.", HttpStatus.UNAUTHORIZED, 103),
+    SessionIdInvalid("해당 세션은 유효하지 않습니다.", HttpStatus.UNAUTHORIZED, 104),
+    LoginRequiredRequestFail("로그인이 필요한 요청이나 로그인 중이 아닙니다", HttpStatus.UNAUTHORIZED, 108),
+
+    PostNotFoundException("해당 게시물은 존재하지 않습니다.", HttpStatus.NOT_FOUND, 201);
 
     private final String message;
+    private final HttpStatus httpStatus;
     private final int internalCode;
 
-    ExceptionMessage(String message, int internalCode) {
+    ExceptionMessage(String message, HttpStatus httpStatus, int internalCode) {
         this.message = message;
+        this.httpStatus = httpStatus;
         this.internalCode = internalCode;
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
     public int getInternalCode() {

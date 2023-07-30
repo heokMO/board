@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import com.example.board.aspect.LoginRequired;
 import com.example.board.dto.common.Message;
 import com.example.board.dto.request.LoginRequest;
 import com.example.board.exception.CustomException;
@@ -58,18 +59,10 @@ public class UserController {
         return ResponseEntity.ok(Message.builder().build());
     }
 
+    @LoginRequired
     @PostMapping("/login-check")
-    public ResponseEntity<Message> loginCheck(HttpServletRequest httpServletRequest){
-        HttpSession session = httpServletRequest.getSession(false);
-        if(session == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.SessionIdNotFound));
-        }
-        String sessionId = session.getId();
-
-        if(userService.isLogin(sessionId)){
-            return ResponseEntity.ok(Message.builder().build());
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(ExceptionMessage.SessionIdInvalid));
+    public ResponseEntity<Message> loginCheck(){
+        return ResponseEntity.ok(Message.builder().build());
     }
 
     @PostMapping("/logout")
