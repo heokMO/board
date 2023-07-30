@@ -19,7 +19,6 @@ public class LoginCheckResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-
         return parameter.hasParameterAnnotation(IsLogin.class);
     }
 
