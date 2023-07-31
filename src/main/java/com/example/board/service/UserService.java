@@ -4,9 +4,5 @@ import com.example.board.exception.CustomException;
 import com.example.board.vo.UserSessionVO;
 
 public interface UserService {
-    Long authenticate(String username, String password) throws CustomException;
-    void createSession(UserSessionVO userSessionVO);
-    void deleteSession(String sessionID);
-
-    boolean isLogin(String sessionId);
+    void authenticate(String username, String password) throws CustomException;
 }

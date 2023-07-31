@@ -1,7 +1,7 @@
 package com.example.board.aspect;
 
 import com.example.board.exception.CustomException;
-import com.example.board.util.LoginChecker;
+import com.example.board.util.AuthenticationHelper;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -13,16 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class LoginAspect {
-    private final LoginChecker loginChecker;
+    private final AuthenticationHelper authenticationHelperImpl;
 
-    public LoginAspect(LoginChecker loginChecker) {
-        this.loginChecker = loginChecker;
+    public LoginAspect(AuthenticationHelper authenticationHelperImpl) {
+        this.authenticationHelperImpl = authenticationHelperImpl;
     }
 
 
     @Before("@annotation(LoginRequired)")
     public void checkLoginStatus() throws CustomException {
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        loginChecker.check(httpServletRequest);
+        authenticationHelperImpl.check(httpServletRequest);
     }
 }

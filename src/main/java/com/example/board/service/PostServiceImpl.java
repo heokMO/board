@@ -18,7 +18,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public boolean isLoginRequired(String id) throws CustomException {
+    public boolean isLoginRequired(String id) {
         Boolean isLoginRequired = postDAO.isLoginRequired(id);
         if(isLoginRequired == null){
             log.error("Not found post. ID: {}", id);
@@ -28,7 +28,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public PostReadDTO findById(String id) throws CustomException {
+    public PostReadDTO findById(String id) {
         PostVO vo = postDAO.findById(id);
         if (vo == null){
             log.error("Not found post. ID: {}", id);
