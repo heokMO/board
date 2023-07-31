@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class LoginCheckResolver implements HandlerMethodArgumentResolver {
-    private final AuthenticationHelperNoOp loginCheckerNoOp;
+    private final AuthenticationHelper authenticationHelper;
 
-    public LoginCheckResolver(AuthenticationHelperNoOp loginCheckerNoOp) {
-        this.loginCheckerNoOp = loginCheckerNoOp;
+    public LoginCheckResolver(AuthenticationHelper authenticationHelper) {
+        this.authenticationHelper = authenticationHelper;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class LoginCheckResolver implements HandlerMethodArgumentResolver {
         if(nativeRequest instanceof HttpServletRequest){
             HttpServletRequest httpServletRequest = (HttpServletRequest) nativeRequest;
 
-            return loginCheckerNoOp.isLogin(httpServletRequest);
+            return authenticationHelper.isLogin(httpServletRequest);
         }
         return false;
     }
