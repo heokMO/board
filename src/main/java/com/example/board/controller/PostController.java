@@ -25,7 +25,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Message> read(@PathVariable String id, @IsLogin boolean isLogin) throws CustomException {
+    public ResponseEntity<Message> read(@PathVariable String id, @IsLogin boolean isLogin) {
         PostReadDTO post;
         if (postService.isLoginRequired(id) && !isLogin) {
             log.error("The board is required login. Post ID: {}", id);

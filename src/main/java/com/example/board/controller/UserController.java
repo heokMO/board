@@ -32,23 +32,19 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Message> processLogin(@RequestBody LoginRequest loginRequest,
                                                 HttpServletResponse response) {
-        String username = null;
-        String password = null;
         try {
-            username = NullChecker.check(loginRequest.getUsername(), new CustomException(ExceptionMessage.UsernameFail));
-            password = NullChecker.check(loginRequest.getPassword(), new CustomException(ExceptionMessage.PasswordFail));
+            String username = NullChecker.check(loginRequest.getUsername(), new CustomException(ExceptionMessage.UsernameFail));
+            String password = NullChecker.check(loginRequest.getPassword(), new CustomException(ExceptionMessage.PasswordFail));
             userService.authenticate(username, password);
-        } catch (CustomException e) {
-            log.error("User authentication failed", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.getErrorMessage(e));
-        }
-        try{
             Cookie cookie = new Cookie("user", CookieEncryptionUtil.encrypt(username));
             cookie.setMaxAge(LOGIN_COOKIE_DEFAULT_MAX_AGE);
             response.addCookie(cookie);
+        } catch (CustomException e) {
+            log.error("User authentication failed", e);
+            throw e;
         } catch (Exception e){
             log.error("cookie encryption Exception." , e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.getErrorMessage(ExceptionMessage.UsernameEncryptFail));
+            throw new CustomException(ExceptionMessage.UsernameEncryptFail);
         }
         return ResponseEntity.ok(Message.builder().build());
     }
