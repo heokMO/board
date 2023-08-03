@@ -44,11 +44,8 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Message> processLogout(HttpServletRequest httpServletRequest){
-        HttpSession httpSession = httpServletRequest.getSession(false);
-        if(httpSession != null){
-            httpSession.invalidate();
-        }
+    public ResponseEntity<Message> processLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+        authenticationHelper.logout(httpServletRequest, httpServletResponse);
         return ResponseEntity.ok(Message.builder().build());
     }
 }

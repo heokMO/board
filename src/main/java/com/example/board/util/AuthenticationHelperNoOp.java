@@ -20,4 +20,9 @@ public class AuthenticationHelperNoOp implements AuthenticationHelper {
 
     }
 
+    @Override
+    public void logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+
+    }
+
 }

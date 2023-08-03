@@ -9,4 +9,6 @@ public interface AuthenticationHelper {
     void check(HttpServletRequest httpServletRequest) throws CustomException;
     boolean isLogin(HttpServletRequest httpServletRequest);
     void processLogin(String username, String password, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+
+    void logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
 }
