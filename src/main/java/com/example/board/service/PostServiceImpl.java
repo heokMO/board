@@ -8,6 +8,7 @@ import com.example.board.vo.PostVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostServiceImpl implements PostService{
@@ -18,6 +19,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isLoginRequired(String id) throws CustomException {
         Boolean isLoginRequired = postDAO.isLoginRequired(id);
         if(isLoginRequired == null){
@@ -28,6 +30,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    @Transactional
     public PostReadDTO findById(String id) throws CustomException {
         PostVO vo = postDAO.findById(id);
         if (vo == null){
