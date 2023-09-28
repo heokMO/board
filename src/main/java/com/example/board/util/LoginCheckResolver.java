@@ -27,7 +27,6 @@ public class LoginCheckResolver implements HandlerMethodArgumentResolver {
         Object nativeRequest = webRequest.getNativeRequest();
         if(nativeRequest instanceof HttpServletRequest){
             HttpServletRequest httpServletRequest = (HttpServletRequest) nativeRequest;
-
             return loginChecker.isLogin(httpServletRequest);
         }
         return false;

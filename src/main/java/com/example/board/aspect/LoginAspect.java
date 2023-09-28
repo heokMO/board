@@ -21,7 +21,7 @@ public class LoginAspect {
 
 
     @Before("@annotation(LoginRequired)")
-    public void checkLoginStatus() throws CustomException {
+    public void checkLoginStatus() {
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         loginChecker.check(httpServletRequest);
     }

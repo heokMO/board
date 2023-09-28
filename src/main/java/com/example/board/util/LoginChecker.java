@@ -19,7 +19,7 @@ public class LoginChecker {
         this.userService = userService;
     }
 
-    public void check(HttpServletRequest httpServletRequest)  throws CustomException{
+    public void check(HttpServletRequest httpServletRequest) {
         HttpSession session = httpServletRequest.getSession(false);
         if(session == null){
             log.error("Session id not found.");

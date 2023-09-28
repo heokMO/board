@@ -1,6 +1,6 @@
 package com.example.board.exception;
 
-public class CustomException extends Exception{
+public class CustomException extends RuntimeException{
     private final ExceptionMessage exceptionMessage;
 
     public CustomException(ExceptionMessage exceptionMessage) {

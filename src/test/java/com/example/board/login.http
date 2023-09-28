@@ -5,6 +5,10 @@ Content-Type: application/json
   "username": "test123",
   "password": "test"
 }
+
 ###
 POST http://localhost:8080/logout
 Content-Type: application/json
+
+###
+GET http://localhost:8080/post/33
