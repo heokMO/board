@@ -19,14 +19,13 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public boolean isLoginRequired(String id) throws CustomException {
-        Boolean isLoginRequired = postDAO.isLoginRequired(id);
-        if(isLoginRequired == null){
+    public boolean hasMemberAccess(String id) throws CustomException {
+        Boolean hasMemberAccess = postDAO.hasMemberAccess(id);
+        if(hasMemberAccess == null){
             log.error("Not found post. ID: {}", id);
             throw new CustomException(ExceptionMessage.PostNotFoundException);
         }
-        return isLoginRequired;
+        return hasMemberAccess;
     }
 
     @Override

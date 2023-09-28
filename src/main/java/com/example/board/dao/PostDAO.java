@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PostDAO {
 
-    Boolean isLoginRequired(String id);
+    Boolean hasMemberAccess(String id);
 
     PostVO findById(String id);
 
