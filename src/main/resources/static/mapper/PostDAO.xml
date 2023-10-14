@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.board.dao.PostDAO">
+    <select id="hasMemberAccess" resultType="java.lang.Boolean">
+        select b.login_req from post p JOIN board b on p.board_id = b.id where p.id = #{postId}
+    </select>
+    <select id="findById" resultType="com.example.board.vo.PostVO">
+        select p.id, p.board_id as boardId, p.title, p.content, p.written_user_id as wittenUserId, p.non_mem_nick as nonMemNick, p.update_time as updateTime, p.views, u.nickname as writerNickname
+        from post p
+                 JOIN USER u on p.written_user_id = u.id
+        where p.id = #{postId}
+    </select>
+    <update id="increaseViews">
+        UPDATE post
+        SET views = views + 1
+        WHERE id = #{postId};
+    </update>
+</mapper>
