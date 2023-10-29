@@ -12,7 +12,10 @@ public enum ExceptionMessage {
     InvalidCookieUsername("Cookie의 username이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED, 107),
     LoginRequiredRequestFail("로그인이 필요한 요청이나 로그인 중이 아닙니다", HttpStatus.UNAUTHORIZED, 108),
 
-    PostNotFoundException("해당 게시물은 존재하지 않습니다.", HttpStatus.NOT_FOUND, 201);
+    PostNotFoundException("해당 게시물은 존재하지 않습니다.", HttpStatus.NOT_FOUND, 201),
+    TokenCreateFail("Token을 생성하는데 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, 109),
+    ExpiredToken("Token이 만료되었습니다.", HttpStatus.UNAUTHORIZED, 110),
+    TokenParseFail("Token을 파싱하는데 실패하였습니다.", HttpStatus.BAD_REQUEST, 111);
 
 
     private final String message;

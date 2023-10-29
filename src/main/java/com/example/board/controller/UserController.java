@@ -8,9 +8,9 @@ import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
 import com.example.board.util.CookieEncryptionUtil;
 import com.example.board.util.NullChecker;
+import com.example.board.util.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +24,11 @@ public class UserController {
     private final static int LOGIN_COOKIE_DEFAULT_MAX_AGE = 24 * 60 * 60;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final TokenUtil tokenUtil;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TokenUtil tokenUtil) {
         this.userService = userService;
+        this.tokenUtil = tokenUtil;
     }
 
     @PostMapping("/login")
@@ -36,7 +38,8 @@ public class UserController {
             String username = NullChecker.check(loginRequest.getUsername(), new CustomException(ExceptionMessage.UsernameFail));
             String password = NullChecker.check(loginRequest.getPassword(), new CustomException(ExceptionMessage.PasswordFail));
             userService.authenticate(username, password);
-            Cookie cookie = new Cookie("user", CookieEncryptionUtil.encrypt(username));
+            String token = tokenUtil.create(username);
+            Cookie cookie = new Cookie("user", CookieEncryptionUtil.encrypt(token));
             cookie.setMaxAge(LOGIN_COOKIE_DEFAULT_MAX_AGE);
             response.addCookie(cookie);
         } catch (CustomException e) {
