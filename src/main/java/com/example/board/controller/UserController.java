@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class UserController {
-    private final static int LOGIN_COOKIE_DEFAULT_MAX_AGE = 24 * 60 * 60;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final TokenUtil tokenUtil;
@@ -32,16 +31,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Message> processLogin(@RequestBody LoginRequest loginRequest,
-                                                HttpServletResponse response) {
+    public ResponseEntity<Message> processLogin(@RequestBody LoginRequest loginRequest) {
         try {
             String username = NullChecker.check(loginRequest.getUsername(), new CustomException(ExceptionMessage.UsernameFail));
             String password = NullChecker.check(loginRequest.getPassword(), new CustomException(ExceptionMessage.PasswordFail));
             userService.authenticate(username, password);
             String token = tokenUtil.create(username);
-            Cookie cookie = new Cookie("user", CookieEncryptionUtil.encrypt(token));
-            cookie.setMaxAge(LOGIN_COOKIE_DEFAULT_MAX_AGE);
-            response.addCookie(cookie);
+            return ResponseEntity.ok(Message.builder().result(token).build());
         } catch (CustomException e) {
             log.error("User authentication failed", e);
             throw e;
@@ -49,7 +45,6 @@ public class UserController {
             log.error("cookie encryption Exception." , e);
             throw new CustomException(ExceptionMessage.UsernameEncryptFail);
         }
-        return ResponseEntity.ok(Message.builder().build());
     }
 
     @LoginRequired
@@ -64,6 +59,7 @@ public class UserController {
         Cookie cookie = new Cookie("user", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+        tokenUtil.delete(response.getHeader("authorization"));
         return ResponseEntity.ok(Message.builder().build());
     }
 }

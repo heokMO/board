@@ -22,21 +22,13 @@ public class LoginChecker {
     }
 
     public void check(HttpServletRequest httpServletRequest)  throws CustomException{
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if(cookies == null){
-            log.error("cookies is null");
-            throw new CustomException(ExceptionMessage.CookieNotFoundError);
-        }
         try{
-            Optional<Cookie> cookie = Arrays.stream(cookies).filter(e-> e.getName().equals("user")).findFirst();
-            String encryptedToken = cookie.orElseThrow().getValue();
-            String token = CookieEncryptionUtil.decrypt(encryptedToken);
+            String token = httpServletRequest.getHeader("authorization");
+            if(token == null){
+                throw new CustomException(ExceptionMessage.TokenNotFound);
+            }
             tokenUtil.check(token);
         } catch (NoSuchElementException e){
-            String cookieKeyList = Arrays.stream(cookies)
-                    .map(Cookie::getName)
-                    .reduce("", (a, b)-> a + "," +b);
-            log.error("Username Cookie is not found. cookie key list: {}", cookieKeyList);
             throw new CustomException(ExceptionMessage.UsernameCookieNotFoundError);
         }
     }
