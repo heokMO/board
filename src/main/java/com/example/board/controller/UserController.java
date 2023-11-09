@@ -8,9 +8,9 @@ import com.example.board.exception.ExceptionMessage;
 import com.example.board.service.UserService;
 import com.example.board.util.CookieEncryptionUtil;
 import com.example.board.util.NullChecker;
+import com.example.board.util.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,24 +21,23 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class UserController {
-    private final static int LOGIN_COOKIE_DEFAULT_MAX_AGE = 24 * 60 * 60;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final TokenUtil tokenUtil;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TokenUtil tokenUtil) {
         this.userService = userService;
+        this.tokenUtil = tokenUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Message> processLogin(@RequestBody LoginRequest loginRequest,
-                                                HttpServletResponse response) {
+    public ResponseEntity<Message> processLogin(@RequestBody LoginRequest loginRequest) {
         try {
             String username = NullChecker.check(loginRequest.getUsername(), new CustomException(ExceptionMessage.UsernameFail));
             String password = NullChecker.check(loginRequest.getPassword(), new CustomException(ExceptionMessage.PasswordFail));
             userService.authenticate(username, password);
-            Cookie cookie = new Cookie("user", CookieEncryptionUtil.encrypt(username));
-            cookie.setMaxAge(LOGIN_COOKIE_DEFAULT_MAX_AGE);
-            response.addCookie(cookie);
+            String token = tokenUtil.create(username);
+            return ResponseEntity.ok(Message.builder().result(token).build());
         } catch (CustomException e) {
             log.error("User authentication failed", e);
             throw e;
@@ -46,7 +45,6 @@ public class UserController {
             log.error("cookie encryption Exception." , e);
             throw new CustomException(ExceptionMessage.UsernameEncryptFail);
         }
-        return ResponseEntity.ok(Message.builder().build());
     }
 
     @LoginRequired
@@ -61,6 +59,7 @@ public class UserController {
         Cookie cookie = new Cookie("user", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+        tokenUtil.delete(response.getHeader("authorization"));
         return ResponseEntity.ok(Message.builder().build());
     }
 }

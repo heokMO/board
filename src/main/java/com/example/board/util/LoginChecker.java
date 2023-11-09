@@ -2,7 +2,6 @@ package com.example.board.util;
 
 import com.example.board.exception.CustomException;
 import com.example.board.exception.ExceptionMessage;
-import com.example.board.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,28 +15,20 @@ import java.util.Optional;
 @Component
 public class LoginChecker {
     private final static Logger log = LoggerFactory.getLogger(LoginChecker.class);
-    private final UserService userService;
+    private final TokenUtil tokenUtil;
 
-    public LoginChecker(UserService userService) {
-        this.userService = userService;
+    public LoginChecker(TokenUtil tokenUtil) {
+        this.tokenUtil = tokenUtil;
     }
 
     public void check(HttpServletRequest httpServletRequest)  throws CustomException{
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if(cookies == null){
-            log.error("cookies is null");
-            throw new CustomException(ExceptionMessage.CookieNotFoundError);
-        }
         try{
-            Optional<Cookie> cookie = Arrays.stream(cookies).filter(e-> e.getName().equals("user")).findFirst();
-            String encryptedUsername = cookie.orElseThrow().getValue();
-            String username = CookieEncryptionUtil.decrypt(encryptedUsername);
-            userService.checkUsername(username);
+            String token = httpServletRequest.getHeader("authorization");
+            if(token == null){
+                throw new CustomException(ExceptionMessage.TokenNotFound);
+            }
+            tokenUtil.check(token);
         } catch (NoSuchElementException e){
-            String cookieKeyList = Arrays.stream(cookies)
-                    .map(Cookie::getName)
-                    .reduce("", (a, b)-> a + "," +b);
-            log.error("Username Cookie is not found. cookie key list: {}", cookieKeyList);
             throw new CustomException(ExceptionMessage.UsernameCookieNotFoundError);
         }
     }
